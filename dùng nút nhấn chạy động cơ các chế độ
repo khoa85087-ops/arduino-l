@@ -1,0 +1,71 @@
+int ENB = 9;
+int IN1 = 10;
+int IN2 = 11;
+int button = 12;
+
+int state = 0;
+int lastButton = HIGH;
+int reading ;
+
+void setup() {
+  pinMode(ENB, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(button, INPUT_PULLUP);
+
+  Serial.begin(9600);   // mở cổng serial
+}
+
+void quay_cham(){
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENB, 50);
+  delay(100);
+}
+
+void quay_nhanh(){
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  analogWrite(ENB, 100);
+  delay(100);
+}
+
+void dao_chieuquay(){
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  analogWrite(ENB, 50);
+  delay(100);
+}
+
+void loop() {
+
+  reading = digitalRead(button);
+
+  Serial.print("Button = ");
+  Serial.print(reading);
+  Serial.print("   State = ");
+  Serial.println(state);
+
+  if (reading == LOW && lastButton == HIGH) {
+    state++;
+    delay(200);
+  }
+
+  lastButton = reading;
+
+  if (state == 1) {
+    quay_cham();
+  }
+  else if (state == 2) {
+    quay_nhanh();
+  }
+  else if (state == 3){
+    dao_chieuquay();
+    
+  }
+  else if (state==4){
+      digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+     state = 0;
+  }
+}
