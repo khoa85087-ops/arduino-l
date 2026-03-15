@@ -3,37 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Logic Flow Pro</title>
+    <title>Easy Logic Flow</title>
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --primary: #007bff; --bg-editor: #1e1e1e; --bg-header: #111; }
-        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; background: #2d2d2d; color: white; overflow: hidden; }
-        .header { background: var(--bg-header); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        :root { --primary: #007bff; --dark: #1e1e1e; }
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; height: 100vh; margin: 0; background: #2d2d2d; color: white; }
+        .header { background: #111; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
         .container { display: flex; flex: 1; overflow: hidden; }
         
-        /* Editor Area */
+        /* Editor */
         .editor-container { width: 35%; display: flex; flex-direction: column; border-right: 1px solid #444; }
-        textarea { flex: 1; padding: 20px; font-family: 'Consolas', monospace; font-size: 15px; border: none; outline: none; background: var(--bg-editor); color: #85c1e9; line-height: 1.6; resize: none; }
+        textarea { flex: 1; padding: 20px; font-family: 'Consolas', monospace; font-size: 15px; border: none; outline: none; background: var(--dark); color: #85c1e9; line-height: 1.6; resize: none; }
         
-        /* Viewer Area */
-        #viewer { width: 65%; background: white; overflow: auto; display: flex; flex-direction: column; align-items: center; padding: 40px; position: relative; }
+        /* Viewer */
+        #viewer { width: 65%; background: white; overflow: auto; display: flex; justify-content: center; padding: 40px; }
         
         /* Controls */
-        button { background: #444; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-left: 5px; font-weight: 500; }
+        button { background: #444; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-left: 5px; }
         button:hover { background: var(--primary); }
-        .btn-green { background: #27ae60; }
         .status { font-size: 12px; color: #888; margin-right: 10px; }
-        .hint-bar { font-size: 11px; color: #777; padding: 10px; background: #000; display: flex; justify-content: space-between; }
+        .hint { font-size: 11px; color: #555; padding: 10px; background: #000; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div><strong>EASY LOGIC FLOW PRO</strong> <span class="status" id="status">Đã lưu</span></div>
+    <div><strong>EASY LOGIC FLOW</strong> <span class="status" id="status">Sẵn sàng</span></div>
     <div>
-        <button onclick="toggleDirection()">Đổi hướng (Dọc/Ngang)</button>
-        <button onclick="downloadImage()" class="btn-green">📸 Tải ảnh PNG</button>
+        <button onclick="downloadImage()" style="background: #27ae60;">📸 Tải ảnh PNG</button>
     </div>
 </div>
 
@@ -49,14 +47,10 @@ A .. B
 B .Đúng. C
 B .Sai. D
 C .. E("Kết thúc")
-
-%% Thử đổi màu:
-style A fill:#f96
-style C fill:#9f9
         </textarea>
-        <div class="hint-bar">
-            <span>A("Tròn") | B["Vuông"] | C{"Nhọn"}</span>
-            <span>Nối: .. hoặc .Text.</span>
+        <div class="hint">
+            Mẹo: A("Tròn") | B["Vuông"] | C{"Nhọn"} <br>
+            Nối: A .. B (Trống) | A .Text. B (Có chữ)
         </div>
     </div>
     
@@ -66,46 +60,38 @@ style C fill:#9f9
 </div>
 
 <script>
-    mermaid.initialize({ startOnLoad: true, theme: 'default', flowchart: { useMaxWidth: false, htmlLabels: true } });
+    mermaid.initialize({ startOnLoad: true, theme: 'default' });
 
     let timeout = null;
-    let currentDir = "TD"; // TD: Top-Down, LR: Left-Right
-
-    // Load dữ liệu cũ khi mở app
-    if(localStorage.getItem('savedLogic')) {
-        document.getElementById('inputText').value = localStorage.getItem('savedLogic');
-    }
-
-    function toggleDirection() {
-        currentDir = (currentDir === "TD") ? "LR" : "TD";
-        processAndRender();
-    }
 
     function parseCustomSyntax(text) {
         let lines = text.split('\n');
-        let output = `graph ${currentDir}\n`;
+        let output = "graph TD\n";
 
         lines.forEach(line => {
             let trimmed = line.trim();
-            if (!trimmed) return;
+            if (!trimmed || trimmed.startsWith('%%')) return;
 
-            // Xử lý nối có text: A .Nội dung. B
-            if (trimmed.includes('.') && !trimmed.includes('..') && !trimmed.startsWith('style') && !trimmed.startsWith('%%')) {
+            // 1. Xử lý nối có text: A .Nội dung. B  =>  A -- Nội dung --> B
+            if (trimmed.includes('.') && !trimmed.includes('..')) {
                 let parts = trimmed.split('.');
                 if (parts.length >= 3) {
-                    output += `    ${parts[0].trim()} -- "${parts[1].trim()}" --> ${parts[2].trim()}\n`;
+                    let from = parts[0].trim();
+                    let label = parts[1].trim();
+                    let to = parts[2].trim();
+                    output += `    ${from} -- "${label}" --> ${to}\n`;
                     return;
                 }
             }
 
-            // Xử lý nối không text: A .. B
+            // 2. Xử lý nối không text: A .. B  =>  A --> B
             if (trimmed.includes('..')) {
                 let parts = trimmed.split('..');
                 output += `    ${parts[0].trim()} --> ${parts[1].trim()}\n`;
                 return;
             }
 
-            // Các lệnh style hoặc định nghĩa khối giữ nguyên
+            // 3. Giữ nguyên các định nghĩa khối A("Bắt đầu"), B["Xử lý"]
             output += `    ${trimmed}\n`;
         });
 
@@ -113,13 +99,11 @@ style C fill:#9f9
     }
 
     function processAndRender() {
-        document.getElementById('status').innerText = "Đang lưu...";
+        document.getElementById('status').innerText = "Đang vẽ...";
         clearTimeout(timeout);
         
         timeout = setTimeout(() => {
             const rawText = document.getElementById('inputText').value;
-            localStorage.setItem('savedLogic', rawText); // Lưu vào máy
-            
             const mermaidSyntax = parseCustomSyntax(rawText);
             const container = document.getElementById('mermaidContainer');
             
@@ -127,7 +111,7 @@ style C fill:#9f9
                 container.removeAttribute('data-processed');
                 container.innerHTML = mermaidSyntax;
                 mermaid.contentLoaded();
-                document.getElementById('status').innerText = "Đã lưu vào máy";
+                document.getElementById('status').innerText = "Đã cập nhật";
             } catch (e) {
                 document.getElementById('status').innerText = "Lỗi cú pháp!";
             }
@@ -136,9 +120,9 @@ style C fill:#9f9
 
     async function downloadImage() {
         const viewer = document.getElementById('viewer');
-        const canvas = await html2canvas(viewer, { backgroundColor: '#ffffff' });
+        const canvas = await html2canvas(viewer);
         const link = document.createElement('a');
-        link.download = 'logic-flow-' + Date.now() + '.png';
+        link.download = 'logic-flow.png';
         link.href = canvas.toDataURL();
         link.click();
     }
