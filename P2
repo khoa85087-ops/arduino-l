@@ -8,9 +8,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
+
 :root{
 --primary:#007bff;
---dark:#1e1e1e;
 }
 
 body{
@@ -84,17 +84,20 @@ padding:10px;
 background:#000;
 color:#888;
 }
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
+
 <div><b>EASY LOGIC FLOW</b></div>
 
 <div>
 <button onclick="downloadPNG()">📸 PNG</button>
 </div>
+
 </div>
 
 <div class="container">
@@ -102,20 +105,40 @@ color:#888;
 <div class="editor">
 
 <textarea id="input">
+
 A("Bắt đầu")
-B{"Kiểm tra"}
-C["Thành công"]
-D["Thất bại"]
+
+B//"Nhập số"//
+
+C{"Kiểm tra"}
+
+D<"Xử lý dữ liệu">
+
+E["Thành công"]
+
+F["Thất bại"]
 
 A .. B
-B .Đúng. C
-B .Sai. D
-C .. E("Kết thúc")
+B .. C
+C .Đúng. D
+C .Sai. F
+D .. E
+E .. G("Kết thúc")
+
 </textarea>
 
 <div class="hint">
-A("Tròn") | B["Vuông"] | C{"Decision"} <br>
-A .. B | A .text. B
+
+() = Start/End  
+[] = Process  
+{} = Decision  
+
+//"text"// = Input / Output  
+&lt;"text"&gt; = Subroutine  
+
+A .. B  
+A .text. B
+
 </div>
 
 </div>
@@ -143,6 +166,23 @@ let t=l.trim()
 
 if(!t)return
 
+// INPUT OUTPUT  A//"text"//
+if(t.includes('//"')){
+let name=t.split('//')[0].trim()
+let label=t.match(/"(.*?)"/)[1]
+out+=name+'[/' + label + '/]\n'
+return
+}
+
+// SUBROUTINE  A<"text">
+if(t.includes('<"')){
+let name=t.split('<')[0].trim()
+let label=t.match(/"(.*?)"/)[1]
+out+=name+'[[' + label + ']]\n'
+return
+}
+
+// LINK ..
 if(t.includes(".."))
 {
 let p=t.split("..")
@@ -150,6 +190,7 @@ out+=p[0].trim()+" --> "+p[1].trim()+"\n"
 return
 }
 
+// LINK TEXT
 if(t.includes(".") && !t.includes(".."))
 {
 let p=t.split(".")
