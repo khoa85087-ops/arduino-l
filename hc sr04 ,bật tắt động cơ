@@ -1,0 +1,59 @@
+int ENB = 10;
+int IN1 = 9;
+int IN2 = 8;
+
+int trigPin = 6;
+int echoPin = 7;
+
+void setup() {
+  pinMode(ENB, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+
+  Serial.begin(9600);
+}
+
+long readDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duration = pulseIn(echoPin, HIGH, 30000); // thêm timeout
+
+  long distance = duration * 0.034 / 2;
+  return distance;
+}
+
+void loop() {
+  long distance = readDistance();
+
+  int pwm = 0;
+
+  if (distance > 0 && distance < 6) {
+    pwm = 255; // chạy max (có thể chỉnh)
+  
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  } else {
+    pwm = 0; // dừng
+  
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+  }
+
+  analogWrite(ENB, pwm);
+
+  // debug
+  Serial.print("Dist: ");
+  Serial.print(distance);
+  Serial.print(" cm | PWM: ");
+  Serial.println(pwm);
+
+  delay(50);
+}
