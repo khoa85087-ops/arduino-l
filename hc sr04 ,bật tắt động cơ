@@ -15,17 +15,17 @@ void setup() {
 
   Serial.begin(9600);
 }
-
+// hàm con đọc khoảng cách 
 long readDistance() {
+// phát xung chân trigger 
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
-
+// đo thời gian 
   long duration = pulseIn(echoPin, HIGH, 30000); // thêm timeout
-
+//s=tg * nhân cho vận tốc âm thanh chia cho 2 lần quản đường 
   long distance = duration * 0.034 / 2;
   return distance;
 }
