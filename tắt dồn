@@ -1,4 +1,6 @@
-#include <bt_1.h>
+
+#include <bt_2.h>
+
 #include <def_877a.h>
 #use delay(clock=4000000)
 #FUSES NOWDT,HS,NOPUT,NOPROTECT,NODEBUG,NOBROWNOUT,NOLVP,
@@ -22,17 +24,20 @@ int xoay,kq;
       kq=0b11111111;
       for (i=8;i>=1;i--){
       xoay=kq;
+      
+     //ht truoc khi chay 
       portd=kq;
       delay_ms(500);
+      //ht trong khi chay 
       for (j=1;j<=i;j++){
       xoay=xoay>>1;
       portd=xoay&kq;
       delay_ms(500);
       }
+      //them 1 so 0 moi lan 
       kq=kq>>1;
       }
       
    }
 
 }
-
