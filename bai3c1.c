@@ -1,0 +1,75 @@
+#include <bt_2.h>
+
+#include <def_877a.h>
+#use delay(clock=4000000)
+#FUSES NOWDT,HS,NOPUT,NOPROTECT,NODEBUG,NOBROWNOUT,NOLVP,
+void chop_tat();
+void sang_dich();
+void sang_don();
+void main()
+{
+// set d,a,c,e=output 
+trisd=0x00;
+trisa=0x00;
+trisc=0x00;
+trise=0x00;
+//gan gia tri 
+porta=0b00000010;
+porte=0b00000000;
+portc=0b00000000;
+signed int i,j;
+int xoay,kq;
+   while(true)
+   {
+ chop_tat();
+  sang_dich();
+     sang_don();
+   }
+
+}
+void chop_tat(){
+int i;
+for (i=1;i<=10;i++){
+portd=0b11111111;
+delay_ms(200);
+portd=0b00000000;
+delay_ms(200);
+
+}
+}
+void sang_dich(){
+int i;int j;
+for (i=1;i<=5;i++){
+portd=0b00000001;
+delay_ms(300);
+for (j=1;j<=7;j++){
+portd=0b00000001<<j; 
+delay_ms(300);
+}
+
+
+}
+
+}
+void sang_don(){
+int i,j,k;
+int kq,xoay;
+
+for(k=1;k<=3;k++){
+kq=0b00000000;
+xoay=0b000000000;
+portd=0b00000000;
+for ( i=8;i>=1;i--){
+portd=0b00000001|kq;
+xoay=portd;
+delay_ms(300);
+for (j=1;j<=i-1;j++){
+xoay=xoay<<1;
+portd=xoay|kq;
+delay_ms(300);
+}
+kq=(kq>>1)|0b10000000;
+}
+
+}
+}
