@@ -18,13 +18,13 @@ int xoay,kq;
    while(true)
    {
 
-      kq=0b11111111;
-     
-      for (i=8;i>=1;i--){
       xoay=0b11111111;
-      portd=kq&xoay ;
+      kq=0b11111111;
+      for (i=8;i>=1;i--){
+      xoay=kq;
+      portd=kq;
       delay_ms(500);
-      for (j=1;j<i;j++){
+      for (j=1;j<=i;j++){
       xoay=xoay>>1;
       portd=xoay&kq;
       delay_ms(500);
@@ -35,3 +35,4 @@ int xoay,kq;
    }
 
 }
+
