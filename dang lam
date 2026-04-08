@@ -1,0 +1,39 @@
+#include <bt_2.h>
+
+#include <def_877a.h>
+#use delay(clock=4000000)
+#FUSES NOWDT,HS,NOPUT,NOPROTECT,NODEBUG,NOBROWNOUT,NOLVP,
+
+void main()
+{
+// set d=output 
+trisd=0x00;
+trisa=0x00;
+trisc=0x00;
+trise=0x00;
+porta=0b00000010;
+porte=0b00000000;
+portc=0b00000000;
+signed int i,j;
+int xoay,kq;
+   while(true)
+   {
+
+      xoay=0b00000000;
+      kq=0b00000000;
+      for (i=8;i>=1;i--){
+      xoay=kq;
+      portd=kq;
+      
+      
+      for (j=1;j<=i;j++){
+      xoay =(xoay<<1)|0b00000001;
+      portd=xoay;
+      delay_ms(500);
+      }
+      kq=(kq>>1)|0b10000000;;
+      }
+      
+   }
+
+}
