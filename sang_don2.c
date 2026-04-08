@@ -22,16 +22,16 @@ int xoay,kq;
       xoay=0b00000000;
       kq=0b00000000;
       for (i=8;i>=1;i--){
-      xoay=kq;
-      portd=kq;
+     
+      portd=kq|0b000000001;
+      delay_ms(500);
       
-      
-      for (j=1;j<=i;j++){
-      xoay =(xoay<<1)|0b00000001;
-      portd=xoay;
+      for (j=1;j<i;j++){
+      xoay =(0b00000001<<j);
+      portd=xoay|kq;
       delay_ms(500);
       }
-      kq=(kq>>1)|0b10000000;;
+      kq=(kq>>1)|0b10000000;
       }
       
    }
