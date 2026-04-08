@@ -1,5 +1,4 @@
-
-#include <bt_2.h>
+#include <bt_1.h>
 
 #include <def_877a.h>
 #use delay(clock=4000000)
@@ -20,13 +19,13 @@ int xoay,kq;
    while(true)
    {
 
-      xoay=0b11111111;
+      
       kq=0b11111111;
       for (i=8;i>=1;i--){
-      xoay=kq;
       
      //ht truoc khi chay 
-      portd=kq;
+      portd=0b11111111&kq;
+      xoay=portd;
       delay_ms(500);
       //ht trong khi chay 
       for (j=1;j<=i;j++){
@@ -41,3 +40,4 @@ int xoay,kq;
    }
 
 }
+
