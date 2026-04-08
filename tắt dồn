@@ -31,7 +31,7 @@ int xoay,kq;
       //ht trong khi chay 
       for (j=1;j<=i;j++){
       xoay=xoay>>1;
-      portd=xoay&kq;
+      portd=xoay;
       delay_ms(500);
       }
       //them 1 so 0 moi lan 
